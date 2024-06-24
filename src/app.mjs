@@ -24,9 +24,7 @@ connectMongoDB();
 
 const hbs = create({ extname: '.handlebars' });
 
-app.engine('handlebars', engine({
-    handlebars: allowInsecurePrototypeAccess(Handlebars)
-}));
+app.engine('handlebars', engine({ handlebars: allowInsecurePrototypeAccess(Handlebars) }));
 app.set('view engine', '.handlebars');
 app.set('views', path.join(__dirname, 'views'));
 

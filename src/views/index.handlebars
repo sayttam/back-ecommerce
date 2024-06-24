@@ -29,7 +29,7 @@
 
     <script>
         function addToCart(productId) {
-            fetch('/api/carts/<your-cart-id>/product/' + productId, {
+            fetch('/api/carts/6678c304adca6260cf4c7a19/products/' + productId, {
                 method: 'POST'
             }).then(response => {
                 if (response.ok) {
