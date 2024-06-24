@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-Time Products</title>
+    <title>RTP</title>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/index.js"></script>
     <script>
-        const socket = io();
-
         socket.on('productos', (productos) => {
             const lista = document.getElementById('lista-productos');
             lista.innerHTML = '';
@@ -30,6 +30,7 @@
         };
     </script>
 </head>
+
 <body>
     <h1>Productos en Tiempo Real</h1>
     <ul id="lista-productos">
@@ -47,4 +48,5 @@
     <input type="text" id="titleEliminar" placeholder="Título">
     <button onclick="eliminarProducto()">Eliminar</button>
 </body>
+
 </html>
