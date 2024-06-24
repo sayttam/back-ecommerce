@@ -2,6 +2,12 @@
 
 Este proyecto fue creado con Node.js y Express para curso de backend de Coderhouse
 
+Conexión mongoDB:
+
+mongodb+srv://admin:123@proyectocoder-mjb.vxoxal7.mongodb.net
+
+
+
 Resumen de Endpoints
 
 //            PRODUCTOS
