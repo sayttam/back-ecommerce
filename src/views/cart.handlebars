@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Carrito</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <h1>Carrito</h1>
+    <div>
+        {{#each cart.products}}
+            <div class="product">
+                <h2>{{this.productId.title}}</h2>
+                <p>{{this.productId.description}}</p>
+                <p>Precio: {{this.productId.price}}</p>
+                <p>Cantidad: {{this.quantity}}</p>
+            </div>
+        {{/each}}
+    </div>
+</body>
+</html>
