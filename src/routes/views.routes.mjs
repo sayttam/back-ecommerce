@@ -4,6 +4,16 @@ import Cart from '../dao/mongoDB/models/cart.model.mjs';
 
 const router = Router();
 
+router.get('/', async (req, res) => {
+    const products = await Product.find({});
+    res.render('home', { productos: products });
+});
+
+router.get('/realtimeproducts', async (req, res) => {
+    const products = await Product.find({});
+    res.render('realTimeProducts', { productos: products });
+});
+
 router.get('/products', async (req, res) => {
     let { limit = 10, page = 1, sort, category, available } = req.query;
 

@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import Product from '../dao/mongoDB/models/product.model.mjs';
 import express from 'express';
-//import generateId from '../idgenerator/idgenerator.js';
 import { Server } from 'socket.io';
 import http from 'http';
 
