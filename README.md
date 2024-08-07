@@ -10,6 +10,48 @@ mongodb+srv://admin:123@proyectocoder-mjb.vxoxal7.mongodb.net
 
 Resumen de Endpoints
 
+//           USUARIOS
+
+POST /api/sessions/register = Registrar nuevo usuario
+
+**Cuerpo de la solicitud:**
+{
+    "first_name": "John",
+    "last_name": "Doe",
+    "age": 30,
+    "email": "john.doe@example.com",
+    "password": "password123",
+    "cart": "ObjectId",
+    "role": "user"
+}
+
+POST /api/sessions/login = Autentica un usuario y devuelve un token JWT
+
+**Cuerpo de la solicitud:**
+{
+    "email": "john.doe@example.com",
+    "password": "password123"
+}
+
+PUT /api/sessions/users/:uid = Actualiza la información de un usuario existente
+
+**Cuerpo de la solicitud:**
+{
+    "first_name": "John",
+    "last_name": "Doe",
+    "age": 31,
+    "email": "john.doe@example.com",
+    "password": "newpassword123",
+    "cart": "ObjectId",
+    "role": "admin"
+}
+
+DELETE /api/sessions/users/:uid = Elimina un usuario del sistema
+
+GET /api/sessions/current = Obtiene la información del usuario actualmente autenticado
+
+
+
 //            PRODUCTOS
 
 POST /api/products = Crear un nuevo producto
