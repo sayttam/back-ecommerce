@@ -1,12 +1,10 @@
 
 # Proyecto E-commerce Backend
 
-Este proyecto es una aplicación backend desarrollada con Node.js y Express para un curso de backend de Coderhouse. La aplicación permite la gestión de usuarios, productos, y carritos de compra, incluyendo operaciones CRUD completas y una lógica de compra que genera tickets para los usuarios.
-
 ## Características Principales
 
 - **Gestión de Usuarios**: Registro, autenticación, actualización y eliminación de usuarios.
-- **Gestión de Productos**: Creación, lectura, actualización y eliminación de productos (solo para administradores).
+- **Gestión de Productos**: Creación, lectura, actualización y eliminación de productos.
 - **Gestión de Carritos**: Añadir productos a un carrito, ver el contenido del carrito, y completar la compra.
 - **Generación de Tickets**: Al completar una compra, se genera un ticket con la información de la transacción.
 

@@ -4,6 +4,7 @@
     import jwt from 'jsonwebtoken';
     import auth from '../middleware/auth.middleware.mjs';
     import authorization from '../middleware/authorization.middleware.mjs'
+    import UserDTO from '../dto/user.dto.mjs';
     import dotenv from 'dotenv';
 
     dotenv.config();
@@ -105,10 +106,10 @@
     });
 
     router.get('/current', auth, (req, res) => {
-        res.send({
-            status: 'success',
-            payload: req.user
-        });
+
+        const userDTO = new UserDTO(req.user)
+
+        res.send({ status: 'success', payload: userDTO });
     });
 
     router.get('/:id', auth, authorization(["admin"]), async (req, res) => {
