@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import Product from '../dao/mongoDB/models/product.model.mjs';
-import Cart from '../dao/mongoDB/models/cart.model.mjs';
+import Product from '../persistence/mongoDB/models/product.model.mjs';
+import Cart from '../persistence/mongoDB/models/cart.model.mjs';
 
 const router = Router();
 

@@ -1,6 +1,10 @@
 import passport from 'passport';
 import { Strategy as JwtStrategy } from 'passport-jwt';
-import userModel from '../dao/mongoDB/models/user.model.mjs';
+import userModel from '../persistence/mongoDB/models/user.model.mjs';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 
 const cookieExtractor = req => {
     let token = null;
@@ -12,7 +16,7 @@ const cookieExtractor = req => {
 
 const opts = {
     jwtFromRequest: cookieExtractor,
-    secretOrKey: 'M4t14sBu5t0s'
+    secretOrKey: process.env.SECRET_KEY
 };
 
 passport.use(new JwtStrategy(opts, async (jwt_payload, done) => {

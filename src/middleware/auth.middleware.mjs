@@ -5,6 +5,7 @@ const auth = (req, res, next) => {
         if (err) return res.status(500).send({ message: 'Server Error' });
         if (!user) return res.status(401).send({ message: 'Unauthorized' });
         req.user = user;
+        console.log(req.user)
         next();
     })(req, res, next);
 };

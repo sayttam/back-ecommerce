@@ -39,17 +39,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cookieParser(process.env.SECRET_KEY));
-/* app.use(passport.session({
-    secret: 's3cr3ts3ss10n',
-    resave: true,
-    saveUninitialized: true
-})); */
+
 
 app.use(passport.initialize());
 app.use('/api/sessions', userRouter);
 app.use('/api/products', productosRouter);
 app.use('/api/carts', carritosRouter);
-app.use('/api/user', userRouter);
 app.use('/cookies', cookiesRouter);
 app.use('/', viewsRouter);
 

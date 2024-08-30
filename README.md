@@ -1,485 +1,108 @@
-# back-ecommerce
 
-Este proyecto fue creado con Node.js y Express para curso de backend de Coderhouse
+# Proyecto E-commerce Backend
 
-Conexión mongoDB:
+Este proyecto es una aplicación backend desarrollada con Node.js y Express para un curso de backend de Coderhouse. La aplicación permite la gestión de usuarios, productos, y carritos de compra, incluyendo operaciones CRUD completas y una lógica de compra que genera tickets para los usuarios.
 
-mongodb+srv://admin:123@proyectocoder-mjb.vxoxal7.mongodb.net
+## Características Principales
 
+- **Gestión de Usuarios**: Registro, autenticación, actualización y eliminación de usuarios.
+- **Gestión de Productos**: Creación, lectura, actualización y eliminación de productos (solo para administradores).
+- **Gestión de Carritos**: Añadir productos a un carrito, ver el contenido del carrito, y completar la compra.
+- **Generación de Tickets**: Al completar una compra, se genera un ticket con la información de la transacción.
 
+## Configuración del Proyecto
 
-Resumen de Endpoints
+### Requisitos
 
-//           USUARIOS
+- Node.js
+- MongoDB
 
-POST /api/sessions/register = Registrar nuevo usuario
+La aplicación estará disponible en `http://localhost:8080`.
 
-**Cuerpo de la solicitud:**
-{
-    "first_name": "John",
-    "last_name": "Doe",
-    "age": 30,
-    "email": "john.doe@example.com",
-    "password": "password123",
-    "cart": "ObjectId",
-    "role": "user"
-}
+## Resumen de Endpoints
 
-POST /api/sessions/login = Autentica un usuario y devuelve un token JWT
+### Usuarios
 
-**Cuerpo de la solicitud:**
-{
-    "email": "john.doe@example.com",
-    "password": "password123"
-}
-
-PUT /api/sessions/users/:uid = Actualiza la información de un usuario existente
-
-**Cuerpo de la solicitud:**
-{
-    "first_name": "John",
-    "last_name": "Doe",
-    "age": 31,
-    "email": "john.doe@example.com",
-    "password": "newpassword123",
-    "cart": "ObjectId",
-    "role": "admin"
-}
-
-DELETE /api/sessions/users/:uid = Elimina un usuario del sistema
-
-GET /api/sessions/current = Obtiene la información del usuario actualmente autenticado
-
-
-
-//            PRODUCTOS
-
-POST /api/products = Crear un nuevo producto
-
-GET	/api/products = Obtener todos los productos
-
-GET /api/products/:pid = Obtener un producto por ID
-
-PUT	/api/products/:pid = Actualizar un producto por ID
-
-DELETE	/api/products/:pid = Eliminar un producto por ID
-
-//            CARRITOS
-
-POST /api/carts = Crear un nuevo carrito
-
-GET	/api/carts/:cid = Obtener un carrito por ID
-
-POST /api/carts/:cid/products/:pid = Agregar un producto al carrito
-
-DELETE	/api/carts/:cid/products/:pid = Eliminar un producto del carrito
-
-PUT	/api/carts/:cid = Actualizar el carrito completo
-
-PUT	/api/carts/:cid/products/:pid = Actualizar la cantidad de un producto
-
-DELETE	/api/carts/:cid = Vaciar el carrito
-
-
-//////     PRODUCTOS      /////////
-
-A continuación se detallan los endpoints relacionados con los productos en la aplicación, junto con su uso y ejemplos de solicitudes y respuestas.
-
-1. Crear un nuevo producto
-
-Endpoint: POST /api/products
-
-Descripción: Crea un nuevo producto o actualiza el stock de un producto existente.
-
-Cuerpo de la solicitud:
-
-{
-    "title": "Product Name",
-    "description": "Product Description",
-    "code": "PRODUCT123",
-    "price": 100.00,
-    "stock": 50,
-    "category": "Category Name",
-    "thumbnails": ["url1", "url2"]
-}
-
-Ejemplo de respuesta exitosa:
-
-{
-    "status": "success",
-    "payload": [
-        {
-            "_id": "66741c87e3f650caca73d183",
-            "title": "Product Name",
-            "description": "Product Description",
-            "code": "PRODUCT123",
-            "price": 100.00,
-            "stock": 50,
-            "category": "Category Name",
-            "thumbnails": ["url1", "url2"],
-            "status": true,
-            "createdAt": "2024-06-24T00:51:16.310Z",
-            "__v": 0
-        }
-    ]
-}
-
-2. Obtener todos los productos
-
-Endpoint: GET /api/products
-
-Descripción: Obtiene una lista de todos los productos con paginación, filtros y ordenamiento.
-
-Parámetros de consulta:
-
-- limit: Número de productos por página (por defecto: 10).
-
-- page: Número de la página (por defecto: 1).
-
-- sort: Ordenar por precio (asc o desc).
-
-- category: Filtrar por categoría.
-
-- available: Filtrar por disponibilidad (true o false).
-
-Ejemplo de respuesta exitosa:
-
-{
-    "status": "success",
-    "payload": [
-        {
-            "_id": "66741c87e3f650caca73d183",
-            "title": "Product Name 1",
-            "description": "Product Description 1",
-            "code": "PRODUCT123",
-            "price": 100.00,
-            "stock": 50,
-            "category": "Category Name",
-            "thumbnails": ["url1", "url2"],
-            "status": true,
-            "createdAt": "2024-06-24T00:51:16.310Z",
-            "__v": 0
-        }
-    ],
-    "totalPages": 1,
-    "prevPage": null,
-    "nextPage": null,
-    "page": 1,
-    "hasPrevPage": false,
-    "hasNextPage": false,
-    "prevLink": null,
-    "nextLink": null
-}
-
-3. Obtener un producto por ID
-
-Endpoint: GET /api/products/:pid
-
-Descripción: Obtiene un producto específico por su ID.
-
-Ejemplo de respuesta exitosa:
-
-{
-    "status": "success",
-    "payload": {
-        "_id": "66741c87e3f650caca73d183",
-        "title": "Product Name",
-        "description": "Product Description",
-        "code": "PRODUCT123",
-        "price": 100.00,
-        "stock": 50,
-        "category": "Category Name",
-        "thumbnails": ["url1", "url2"],
-        "status": true,
-        "createdAt": "2024-06-24T00:51:16.310Z",
-        "__v": 0
+- **Registrar Usuario**: `POST /api/users/register`
+    ```json
+    {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "johndoe@example.com",
+      "password": "securepassword",
+      "role": "user"
     }
-}
+    ```
 
-4. Actualizar un producto por ID
-
-Endpoint: PUT /api/products/:pid
-
-Descripción: Actualiza un producto específico por su ID.
-
-Cuerpo de la solicitud:
-
-{
-    "title": "Updated Product Name",
-    "description": "Updated Product Description",
-    "code": "PRODUCT123",
-    "price": 150.00,
-    "stock": 40,
-    "category": "Updated Category",
-    "thumbnails": ["url1", "url2"]
-}
-
-Ejemplo de respuesta exitosa:
-
-{
-    "status": "success",
-    "payload": {
-        "_id": "66741c87e3f650caca73d183",
-        "title": "Updated Product Name",
-        "description": "Updated Product Description",
-        "code": "PRODUCT123",
-        "price": 150.00,
-        "stock": 40,
-        "category": "Updated Category",
-        "thumbnails": ["url1", "url2"],
-        "status": true,
-        "createdAt": "2024-06-24T00:51:16.310Z",
-        "__v": 1
+- **Iniciar Sesión**: `POST /api/users/login`
+    ```json
+    {
+      "email": "johndoe@example.com",
+      "password": "securepassword"
     }
-}
+    ```
 
-5. Eliminar un producto por ID
+- **Obtener Todos los Usuarios**: `GET /api/users`
 
-Endpoint: DELETE /api/products/:pid
+- **Obtener Usuario por ID**: `GET /api/users/:id`
 
-Descripción: Elimina un producto específico por su ID.
-
-Ejemplo de respuesta exitosa:
-
-{
-    "status": "success",
-    "message": "Producto eliminado exitosamente"
-}
-
-
-//////     CARRITOS      /////////
-
-1. Crear un nuevo carrito
-
-Endpoint: POST /api/carts
-
-Descripción: Crea un nuevo carrito con una lista de productos.
-
-Cuerpo de la solicitud:
-
-{
-    "products": [
-        {
-            "productId": "66741c87e3f650caca73d183",
-            "quantity": 2
-        },
-        {
-            "productId": "66741c87e3f650caca73d1b7",
-            "quantity": 1
-        },
-        {
-            "productId": "66741c87e3f650caca73d1a7",
-            "quantity": 5
-        }
-    ]
-}
-
-Ejemplo de respuesta exitosa:
-
-{
-    "status": "success",
-    "payload": {
-        "_id": "6678c304adca6260cf4c7a19",
-        "products": [
-            {
-                "productId": "66741c87e3f650caca73d183",
-                "quantity": 2
-            },
-            {
-                "productId": "66741c87e3f650caca73d1b7",
-                "quantity": 1
-            },
-            {
-                "productId": "66741c87e3f650caca73d1a7",
-                "quantity": 5
-            }
-        ],
-        "createdAt": "2024-06-24T00:51:16.310Z",
-        "__v": 0
+- **Actualizar Usuario**: `PUT /api/users/:id`
+    ```json
+    {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "johndoe@example.com",
+      "password": "newpassword",
+      "role": "admin"
     }
-}
+    ```
 
-2. Obtener un carrito por ID
+- **Eliminar Usuario**: `DELETE /api/users/:id`
 
-Endpoint: GET /api/carts/:cid
+### Productos
 
-Descripción: Obtiene un carrito específico por su ID.
-
-Ejemplo de respuesta exitosa:
-
-{
-    "status": "success",
-    "payload": {
-        "_id": "6678c304adca6260cf4c7a19",
-        "products": [
-            {
-                "productId": "66741c87e3f650caca73d183",
-                "quantity": 2
-            },
-            {
-                "productId": "66741c87e3f650caca73d1b7",
-                "quantity": 1
-            },
-            {
-                "productId": "66741c87e3f650caca73d1a7",
-                "quantity": 5
-            }
-        ],
-        "createdAt": "2024-06-24T00:51:16.310Z",
-        "__v": 0
+- **Crear Producto**: `POST /api/products` (solo administradores)
+    ```json
+    {
+      "name": "Producto 1",
+      "description": "Descripción del producto",
+      "price": 100,
+      "stock": 10
     }
-}
+    ```
 
-3. Agregar un producto al carrito
+- **Obtener Todos los Productos**: `GET /api/products`
 
-Endpoint: POST /api/carts/:cid/products/:pid
+- **Obtener Producto por ID**: `GET /api/products/:id`
 
-Descripción: Agrega un producto específico al carrito. Si el producto ya está en el carrito, incrementa su cantidad.
+- **Actualizar Producto**: `PUT /api/products/:id` (solo administradores)
 
-Ejemplo de respuesta exitosa:
+- **Eliminar Producto**: `DELETE /api/products/:id` (solo administradores)
 
-{
-    "status": "success",
-    "payload": {
-        "_id": "6678c304adca6260cf4c7a19",
-        "products": [
-            {
-                "productId": "66741c87e3f650caca73d183",
-                "quantity": 2
-            },
-            {
-                "productId": "66741c87e3f650caca73d1b7",
-                "quantity": 1
-            },
-            {
-                "productId": "66741c87e3f650caca73d1a7",
-                "quantity": 5
-            },
-            {
-                "productId": "66741c87e3f650caca73d1b7",
-                "quantity": 1
-            }
-        ],
-        "createdAt": "2024-06-24T00:51:16.310Z",
-        "__v": 1
+### Carritos
+
+- **Crear Carrito**: `POST /api/carts`
+
+- **Obtener Todos los Carritos**: `GET /api/carts`
+
+- **Obtener Carrito por ID**: `GET /api/carts/:id`
+
+- **Agregar Producto al Carrito**: `POST /api/carts/:cid/products`
+    ```json
+    {
+      "productId": "id_del_producto",
+      "quantity": 2
     }
-}
+    ```
 
-4. Eliminar un producto del carrito
+- **Eliminar Producto del Carrito**: `DELETE /api/carts/:cid/products/:pid`
 
-Endpoint: DELETE /api/carts/:cid/products/:pid
+- **Completar Compra**: `POST /api/carts/:cid/purchase`
 
-Descripción: Elimina un producto específico del carrito.
+## Pruebas
 
-Ejemplo de respuesta exitosa:
+Puedes probar los endpoints utilizando herramientas como Postman o cURL. Asegúrate de autenticarte y enviar los encabezados necesarios para acceder a los endpoints protegidos.
 
-{
-    "status": "success",
-    "payload": {
-        "_id": "6678c304adca6260cf4c7a19",
-        "products": [
-            {
-                "productId": "66741c87e3f650caca73d183",
-                "quantity": 2
-            },
-            {
-                "productId": "66741c87e3f650caca73d1b7",
-                "quantity": 1
-            }
-        ],
-        "createdAt": "2024-06-24T00:51:16.310Z",
-        "__v": 1
-    }
-}
+---
 
-5. Actualizar el carrito completo
-
-Endpoint: PUT /api/carts/:cid
-
-Descripción: Reemplaza todos los productos en el carrito con una nueva lista de productos.
-
-Cuerpo de la solicitud:
-
-{
-    "products": [
-        {
-            "productId": "66741c87e3f650caca73d183",
-            "quantity": 4
-        },
-        {
-            "productId": "66741c87e3f650caca73d1b7",
-            "quantity": 3
-        }
-    ]
-}
-
-Ejemplo de respuesta exitosa:
-
-{
-    "status": "success",
-    "payload": {
-        "_id": "6678c304adca6260cf4c7a19",
-        "products": [
-            {
-                "productId": "66741c87e3f650caca73d183",
-                "quantity": 4
-            },
-            {
-                "productId": "66741c87e3f650caca73d1b7",
-                "quantity": 3
-            }
-        ],
-        "createdAt": "2024-06-24T00:51:16.310Z",
-        "__v": 1
-    }
-}
-
-6. Actualizar la cantidad de un producto en el carrito
-
-Endpoint: PUT /api/carts/:cid/products/:pid
-
-Descripción: Actualiza la cantidad de un producto específico en el carrito.
-
-Cuerpo de la solicitud:
-
-{
-    "quantity": 10
-}
-
-Ejemplo de respuesta exitosa:
-
-{
-    "status": "success",
-    "payload": {
-        "_id": "6678c304adca6260cf4c7a19",
-        "products": [
-            {
-                "productId": "66741c87e3f650caca73d183",
-                "quantity": 10
-            },
-            {
-                "productId": "66741c87e3f650caca73d1b7",
-                "quantity": 1
-            }
-        ],
-        "createdAt": "2024-06-24T00:51:16.310Z",
-        "__v": 1
-    }
-}
-
-7. Vaciar el carrito
-Endpoint: DELETE /api/carts/:cid
-
-Descripción: Elimina todos los productos del carrito, dejándolo vacío.
-
-Ejemplo de respuesta exitosa:
-
-{
-    "status": "success",
-    "payload": {
-        "_id": "6678c304adca6260cf4c7a19",
-        "products": [],
-        "createdAt": "2024-06-24T00:51:16.310Z",
-        "__v": 1
-    }
-}
+Este README.md debe proporcionar una guía completa para que los usuarios configuren y utilicen el proyecto. Si tienes alguna duda o encuentras un problema, consulta la documentación o contacta con el desarrollador.

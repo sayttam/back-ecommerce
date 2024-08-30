@@ -4,13 +4,13 @@ import bcrypt from 'bcrypt';
 const userCollection = "users";
 
 const userSchema = mongoose.Schema({
-    first_name: { type: String, required: true },
-    last_name: { type: String, required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
     email: { type: String, unique: true, required: true },
-    age: { type: Number, required: true },
+    age: { type: Number },
     password: { type: String, required: true },
     cart: { type: mongoose.Schema.Types.ObjectId, ref: 'Carts' },
-    role: { type: String, default: 'user' }
+    role: { type: String, default: 'user', required: true }
 });
 
 userSchema.pre('save', function(next) {

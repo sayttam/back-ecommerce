@@ -1,85 +1,162 @@
-import { Router } from 'express';
-import userModel from '../dao/mongoDB/models/user.model.mjs';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import auth from '../middleware/auth.middleware.mjs';
+    import express from 'express';
+    import UserRepository from '../repository/user.repository.mjs';
+    import bcrypt from 'bcrypt';
+    import jwt from 'jsonwebtoken';
+    import auth from '../middleware/auth.middleware.mjs';
+    import authorization from '../middleware/authorization.middleware.mjs'
+    import dotenv from 'dotenv';
 
-const router = Router();
+    dotenv.config();
 
-router.get('/', async (req, res) => {
-    try {
-        const result = await userModel.find();
-        res.send({ status: 'success', payload: result });
-    } catch (error) {
-        res.status(500).send({ status: 'error', message: error.message });
-    }
-});
+    const router = express.Router();
+    const userRepository = new UserRepository();
 
-router.post('/register', async (req, res) => {
-    const { first_name, last_name, age, email, password, cart, role } = req.body;
-    try {
-        const user = new userModel({ first_name, last_name, age, email, password, cart, role });
-        await user.save();
-        res.send({ status: 'success', payload: user });
-    } catch (error) {
-        res.status(400).send({ status: 'error', message: error.message });
-    }
-});
+    router.post('/login', async (req, res) => {
+        try {
+            const {
+                email,
+                password
+            } = req.body;
 
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const user = await userModel.findOne({ email });
-        if (!user) return res.status(400).send({ message: 'User not found' });
-        const validPassword = bcrypt.compareSync(password, user.password);
-        console.log(password);
-        console.log(user.password)
-        console.log(validPassword);
-        
-        if (!validPassword) return res.status(400).send({ message: 'Invalid password' });
+            const user = await userRepository.getUserByEmail(email);
 
-        const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: '1h' });
-        res.cookie('token', token, { httpOnly: true }).send({ message: 'Logged in successfully' });
-    } catch (error) {
-        res.status(500).send({ message: error.message });
-    }
-});
+            if (!user) {
+                return res.status(400).json({
+                    error: 'Invalid email or password'
+                });
+            }
 
-router.get('/current', auth, (req, res) => {
-    res.send({ status: 'success', payload: req.user });
-});
+            const isMatch = await bcrypt.compare(password, user.password);
 
-router.put('/:uid', async (req, res) => {
-    const uid = req.params.uid;
-    const { first_name, last_name, age, email, password, cart, role } = req.body;
-    try {
-        const user = await userModel.findOne({ _id: uid });
-        if (!user) throw new Error('User not found');
+            if (!isMatch) {
+                return res.status(400).json({
+                    error: 'Invalid email or password'
+                });
+            }
 
-        user.first_name = first_name ?? user.first_name;
-        user.last_name = last_name ?? user.last_name;
-        user.age = age ?? user.age;
-        user.email = email ?? user.email;
+            const token = jwt.sign({
+                id: user.id,
+                role: user.role
+            }, process.env.SECRET_KEY, {
+                expiresIn: '1h'
+            });
 
-        if (password) user.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-        user.cart = cart ?? user.cart;
-        user.role = role ?? user.role;
+            res.cookie('token', token, {
+                httpOnly: true
+            }).send({
+                message: 'Logged in successfully'
+            });
+        } catch (error) {
+            res.status(500).json({
+                error: 'Failed to authenticate user'
+            });
+        }
+    });
 
-        await user.save();
-        res.send({ status: 'success', payload: user });
-    } catch (error) {
-        res.status(400).send({ status: 'error', message: error.message });
-    }
-});
+    router.post('/register', async (req, res) => {
+        try {
+            const {
+                firstName,
+                lastName,
+                email,
+                password,
+                role
+            } = req.body;
 
-router.delete('/:uid', async (req, res) => {
-    const uid = req.params.uid;
-    try {
-        const result = await userModel.deleteOne({ _id: uid });
-        res.status(200).send({ status: 'success', payload: result });
-    } catch (error) {
-        res.status(400).send({ status: 'error', message: error.message });
-    }
-});
+            const existingUser = await userRepository.getUserByEmail(email);
+            if (existingUser) {
+                return res.status(400).json({
+                    error: 'User already exists'
+                });
+            }
 
-export default router;
+            const newUser = await userRepository.createUser({
+                firstName,
+                lastName,
+                email,
+                password,
+                role
+            });
+
+            const userResponse = {
+                id: newUser.id,
+                email: newUser.email,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+                role: newUser.role
+            };
+
+            res.status(201).json(userResponse);
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    });
+
+
+    router.get('/', auth, authorization(["admin"]), async (req, res) => {
+        try {
+            const users = await userRepository.getAllUsers();
+            res.json(users);
+        } catch (error) {
+            res.status(500).json({
+                error: 'Failed to fetch users'
+            });
+        }
+    });
+
+    router.get('/current', auth, (req, res) => {
+        res.send({
+            status: 'success',
+            payload: req.user
+        });
+    });
+
+    router.get('/:id', auth, authorization(["admin"]), async (req, res) => {
+        try {
+            const user = await userRepository.getUserById(req.params.id);
+            if (!user) {
+                return res.status(404).json({
+                    error: 'User not found'
+                });
+            }
+            res.json(user);
+        } catch (error) {
+            res.status(500).json({
+                error: 'Failed to fetch user'
+            });
+        }
+    });
+
+    router.put('/:id', auth, async (req, res) => {
+        try {
+            const updatedUser = await userRepository.updateUser(req.params.id, req.body);
+            if (!updatedUser) {
+                return res.status(404).json({
+                    error: 'User not found'
+                });
+            }
+            res.json(updatedUser);
+        } catch (error) {
+            res.status(500).json({
+                error: 'Failed to update user'
+            });
+        }
+    });
+
+    router.delete('/:id', auth, authorization(["admin"]), async (req, res) => {
+        try {
+            const deletedUser = await userRepository.deleteUser(req.params.id);
+            if (!deletedUser) {
+                return res.status(404).json({
+                    error: 'User not found'
+                });
+            }
+            res.status(204).send();
+        } catch (error) {
+            res.status(500).json({
+                error: 'Failed to delete user'
+            });
+        }
+    });
+
+    export default router;
